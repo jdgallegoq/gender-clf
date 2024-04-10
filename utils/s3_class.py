@@ -1,10 +1,12 @@
+import sys
 import os
 from io import BytesIO
 import boto3
 
 from PIL import Image
 import numpy as np
-from aws_secrets import *
+sys.path.append('.')
+from utils.aws_secrets import *
 
 class S3Functions:
 
@@ -25,6 +27,14 @@ class S3Functions:
         b = BytesIO(s3_object)
         img = Image.open(b)
         return np.array(img)
+
+    def read_object(self, key):
+        s3_object = self.s3.get_object(
+            Bucket=self.bucket_name,
+            Key=key
+            )['Body']
+        
+        return s3_object
     
     def upload_object(self, obj_path, key):
         self.s3.upload_file(
